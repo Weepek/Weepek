@@ -259,9 +259,11 @@
 
 // export default LandingPage2;
 
-import React, { useEffect, useRef, useCallback, memo } from "react";
+
+// LandingPage.jsx
+import React, { useEffect, useRef, useCallback, memo, useMemo } from "react";
 import { motion } from "framer-motion";
-import { CalendarDays, X } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CALENDLY_URL, HERO_IMAGE, FALLBACK_IMAGE } from "./constants";
@@ -295,18 +297,6 @@ const useCalendly = () => {
   const openCalendlyPopup = useCallback(async () => {
     try {
       await loadCalendly();
-      const popup = document.createElement("div");
-      popup.className = "calendly-popup";
-      const closeButton = document.createElement("button");
-      closeButton.className = "custom-close-button";
-      closeButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-      closeButton.onclick = () => {
-        document.body.removeChild(popup);
-        if (window.Calendly) window.Calendly.closePopupWidget();
-      };
-      popup.appendChild(closeButton);
-      document.body.appendChild(popup);
-
       window.Calendly.initPopupWidget({ url: CALENDLY_URL });
     } catch {
       window.open(CALENDLY_URL, "_blank");
@@ -318,97 +308,92 @@ const useCalendly = () => {
 
 const CreativeButton = memo(() => {
   const { openCalendlyPopup } = useCalendly();
-
   return (
     <motion.button
       onClick={openCalendlyPopup}
-      aria-label="Book a meeting with Poornima"
-      className="relative inline-flex items-center gap-2 px-6 py-3 text-white font-poppins font-semibold text-base sm:text-lg rounded-full overflow-hidden group focus:outline   focus:outline-purple-400"
+      aria-label="Book a meeting"
+      className="relative inline-flex items-center gap-2 px-6 py-3 text-white font-semibold text-base sm:text-lg rounded-full overflow-hidden group focus:outline focus:outline-purple-400 mt-5"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
       <span className="relative z-10 flex items-center gap-2">
-        <CalendarDays className="w-4 h-4 sm:w-5 sm:h-5" />
+        <CalendarDays className="w-5 h-5" />
         Book a Meeting
       </span>
-    <span className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-100 group-hover:opacity-80 transition-opacity z-0"></span>
-      <span className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-40 transition-opacity z-0"></span>
-      <span className="absolute inset-0 flex items-center justify-center z-0">
-         <span className="w-0 h-0 bg-white opacity-20 rounded-full group-hover:w-64 group-hover:h-64 transition-all duration-500 ease-out"></span>
+          <span className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-100 group-hover:opacity-80 transition-opacity z-0"></span>
+     <span className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-40 transition-opacity z-0"></span>
+     <span className="absolute inset-0 flex items-center justify-center z-0">
+        <span className="w-0 h-0 bg-white opacity-20 rounded-full group-hover:w-64 group-hover:h-64 transition-all duration-500 ease-out"></span>
       </span>
-      <span className="absolute inset-0 border-2 border-purple-400 rounded-full animate-pulse z-0"></span>
+     <span className="absolute inset-0 border-2 border-purple-400 rounded-full animate-pulse z-0"></span>
     </motion.button>
   );
 });
 
-const Particle = ({ type, count }) => {
-  return [...Array(count)].map((_, i) => (
+const Particle = memo(({ type, count }) => {
+  const particles = useMemo(() => {
+    return Array.from({ length: count }).map((_, i) => ({
+      id: `${type}-${i}`,
+      left: `${Math.random() * 100}vw`,
+      top: `${Math.random() * 100}vh`,
+      animationDelay: `${Math.random() * (type === "star" ? 1.5 : 4)}s`,
+      animationDuration: `${type === "star" ? 2 : 6 + Math.random() * 4}s`,
+    }));
+  }, [type, count]);
+
+  return particles.map(({ id, left, top, animationDelay, animationDuration }) => (
     <div
-      key={`${type}-${i}`}
+      key={id}
       className={type}
       style={{
-        left: `${Math.random() * 100}vw`,
-        top: `${Math.random() * 100}vh`,
-        animationDelay: `${Math.random() * (type === "star" ? 1.5 : 4)}s`,
-        animationDuration: `${type === "star" ? 2 : 6 + Math.random() * 4}s`,
+        left,
+        top,
+        animationDelay,
+        animationDuration,
+        position: "absolute",
       }}
     />
   ));
-};
+});
 
 const LandingPage = () => {
   const containerRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      try {
-        gsap.to(".particle", {
-          y: -100,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            scrub: true,
-            start: "top bottom",
-            end: "bottom top",
-          },
-        });
+      gsap.to(".particle", {
+        y: -100,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          scrub: true,
+          start: "top bottom",
+          end: "bottom top",
+        },
+      });
 
-        gsap.to(".background-image", {
-          y: 80,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            scrub: true,
-            start: "top bottom",
-            end: "bottom top",
-          },
-        });
+      gsap.to(".background-image", {
+        y: 80,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          scrub: true,
+          start: "top bottom",
+          end: "bottom top",
+        },
+      });
 
-        gsap.to(".animated-gradient", {
-          backgroundPosition: "200% 50%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            scrub: true,
-            start: "top bottom",
-            end: "bottom top",
-          },
-        });
-
-        gsap.from(".content-container h1 span", {
-          opacity: 0,
-          x: (i) => (i % 2 === 0 ? -10 : 10),
-          stagger: 0.05,
-          scrollTrigger: {
-            trigger: ".content-container h1",
-            start: "top 90%",
-          },
-        });
-      } catch (error) {
-        console.error("GSAP animation error:", error);
-      }
+      gsap.to(".animated-gradient", {
+        backgroundPosition: "200% 50%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          scrub: true,
+          start: "top bottom",
+          end: "bottom top",
+        },
+      });
     }, containerRef);
-
     return () => ctx.revert();
   }, []);
 
@@ -422,27 +407,32 @@ const LandingPage = () => {
       className="relative min-h-screen w-full overflow-hidden flex items-center justify-center animated-gradient"
     >
       <div
-        className="background-image"
+        className="background-image absolute inset-0 bg-cover bg-center z-0"
         style={{ backgroundImage: `url(${HERO_IMAGE})` }}
         onError={handleImageError}
       />
-      <Particle type="particle" count={10} />
+      <Particle type="particle" count={12} />
       <Particle type="star" count={20} />
-      <div className="content-container text-center flex flex-col justify-center items-center px-4 sm:px-6 xs:max-w-normal sm:max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl  bg-yellow-300">
+
+      <div className="content-container relative z-10 text-center flex flex-col justify-center items-center px-4 sm:px-6 max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-5xl  ">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-2xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold font-poppins text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-purple-300 drop-shadow-md transition-all duration-300"
+          className="text-2xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-6xl font-bold font-poppins text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-purple-300 drop-shadow-md transition-all duration-300"
         >
-          {"Weepek".split("").map((char, i) => (
-            <span key={i}>{char}</span>
-          ))}{" "}
-          <span className="text-white   ">Your Web Development Partner</span>
+          <span>Weepek </span>Your Web{" "}
+          <span className="block">Development Partner</span>
         </motion.h1>
-        <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-poppins text-gray-100 mt-4 sm:mt-6 leading-relaxed px-2 sm:px-4">
-          For Digital Success - Branding, Websites, Apps, and research solutions.
+          <div className="flex justify-center my-4">
+           <div className="w-[40px] h-[2px] bg-gradient-to-r from-blue-200 to-purple-400 rounded-3xl"></div>
+          </div>
+
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-xl font-poppins text-gray-100 m-2 mt-6 md:mt-8 px-3 md:px-1">
+          A creative digital studio crafting websites, apps, and branding with purpose.  
+         Built for businesses of every scale, powered by research, and driven by design excellence.
         </p>
+
         <div className="mt-6 sm:mt-8">
           <CreativeButton />
         </div>
