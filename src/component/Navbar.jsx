@@ -1,7 +1,3 @@
- 
-
-
-
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
@@ -19,8 +15,8 @@ function Navbar() {
   const navItems = [
     { id: "home", label: "Home", link: "/weepek/" },
     { id: "about", label: "About", link: "/weepek/About" },
-    { id: "project", label: "Project" }, 
-    { id: "contact", label: "Contact Us", link: "/weepek/contact" },
+    { id: "project", label: "Project" },
+    { id: "contact", label: "Contact Us", link: "/weepek/contact" }
   ];
 
   const services = [
@@ -28,7 +24,7 @@ function Navbar() {
     "E-commerce Page",
     "Mobile App",
     "Custom Website",
-    "Other",
+    "Other"
   ];
 
   useEffect(() => {
@@ -85,7 +81,7 @@ function Navbar() {
 
     const response = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
-      body: formData,
+      body: formData
     });
 
     const data = await response.json();
@@ -106,8 +102,8 @@ function Navbar() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeInOut" },
-    },
+      transition: { duration: 0.5, ease: "easeInOut" }
+    }
   };
 
   return (
@@ -127,8 +123,8 @@ function Navbar() {
         </motion.div>
       )}
 
-      {/* Main Navbar */}
-      {(isHomeInView && location.pathname === "/weepek/") && (
+      {/* Desktop Navbar */}
+      {isHomeInView && location.pathname === "/weepek/" && (
         <motion.nav
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -149,13 +145,16 @@ function Navbar() {
                 </div>
               </div>
 
-              <div className="hidden lg:flex lg:items-center lg:space-x-8">
+              <div className="hidden gap-6 lg:flex lg:items-center lg:space-x-8">
                 {navItems.map((item) => (
-                  <span key={item.id}>
+                  <span
+                    key={item.id}
+                    className="relative group mx-2 inline-block"
+                  >
                     {item.link ? (
                       <Link
                         to={item.link}
-                        className="text-primary text-xl hover:text-third transition-colors duration-200"
+                        className="text-blue-100 hover:text-blue-300 text-xl hover:text-third transition-all duration-200  "
                         aria-label={`Go to ${item.label} page`}
                       >
                         {item.label}
@@ -163,25 +162,29 @@ function Navbar() {
                     ) : (
                       <button
                         onClick={() => scrollToSection(item.id)}
-                        className="text-primary text-xl hover:text-third transition-colors duration-200"
+                        className="text-blue-100 hover:text-blue-300 text-xl hover:text-third transition-colors  tansition-all duration-200 "
                         aria-label={`Go to ${item.label} section`}
                       >
                         {item.label}
                       </button>
                     )}
+
+                    {/* Hover underline animation */}
+                    <span className="absolute left-0 bottom-0 w-0 h-[1px] bg-purple-500 transition-all duration-500 group-hover:w-5"></span>
                   </span>
                 ))}
               </div>
 
+              {/* Get In Touch */}
               <div className="hidden lg:flex items-center space-x-4">
                 <button
-                  className="relative px-4 py-2 border border-purple-200 text-white rounded-full group overflow-hidden hover:shadow-lg hover:shadow-purple-500/50"
+                  className="relative px-4 py-2 border border-purple-200 text-white rounded-full group overflow-hidden    "
                   onClick={() => setIsModalOpen(true)}
                   aria-label="Open contact form"
                 >
                   <span className="absolute inset-0 opacity-100 group-hover:opacity-80 transition-opacity z-0"></span>
                   <span className="absolute inset-0 flex items-center justify-center z-0">
-                    <span className="w-0 h-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 rounded-full group-hover:w-64 group-hover:h-64 group-hover:opacity-100 transition-all duration-1000 ease-in-out"></span>
+                    <span className="w-0 h-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 rounded-full group-hover:w-64 group-hover:h-64 group-hover:opacity-100 transition-all duration-1200 ease-in-out"></span>
                   </span>
                   <span className="absolute inset-0 border-2 border-purple-400 rounded-full animate-pulse" />
                   <span className="relative z-10">Get In Touch</span>
@@ -193,28 +196,31 @@ function Navbar() {
                 onClick={() => setIsOpen(!isOpen)}
                 aria-label={isOpen ? "Close menu" : "Open menu"}
               >
-                {isOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+                {isOpen ? (
+                  <X className="w-8 h-8" />
+                ) : (
+                  <Menu className="w-8 h-8" />
+                )}
               </button>
             </div>
 
-              {/* Mobile content */}
-
-            {/* {isOpen && (
+            {/* Mobile content */}
+            {isOpen && (
               <motion.div
-                className="lg:hidden bg-gray-900 border  rounded-b-2xl shadow-lg  mt-2"
+                className="lg:hidden bg-gray-900 border border-white/20 rounded-b-2xl shadow-lg mt-2 px-6 py-4"
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
                 variants={menuVariants}
               >
-                <div className="text-center justify-center items-center">
+                <div className="flex flex-col items-center space-y-4">
                   {navItems.map((item) => (
-                    <span key={item.id}>
+                    <span key={item.id} className="w-full">
                       {item.link ? (
                         <Link
                           to={item.link}
                           onClick={() => setIsOpen(false)}
-                          className="block text-primary hover:text-blue-400 transition-colors duration-200"
+                          className="block w-full text-center text-primary text-lg font-medium py-2 rounded-md hover:bg-white/10 transition duration-200"
                           aria-label={`Go to ${item.label} page`}
                         >
                           {item.label}
@@ -222,7 +228,7 @@ function Navbar() {
                       ) : (
                         <button
                           onClick={() => scrollToSection(item.id)}
-                          className="block text-primary hover:text-blue-400 transition-colors duration-200"
+                          className="block w-full text-center text-primary text-lg font-medium py-2 rounded-md hover:bg-white/10 transition duration-200"
                           aria-label={`Go to ${item.label} section`}
                         >
                           {item.label}
@@ -230,69 +236,21 @@ function Navbar() {
                       )}
                     </span>
                   ))}
-                  <div className="mt-4">
-                    <button
-                      className="w-full px-4 py-2   text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-                      onClick={() => {
-                        setIsModalOpen(true);
-                        setIsOpen(false);
-                      }}
-                      aria-label="Open contact form"
-                    >
-                      Get In Touch
-                    </button>
-                  </div>
+
+                  {/* Get In Touch button */}
+                  <button
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-2 rounded-lg hover:opacity-90 transition duration-200 outline-offset-10"
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setIsOpen(false);
+                    }}
+                    aria-label="Open contact form"
+                  >
+                    Get In Touch
+                  </button>
                 </div>
               </motion.div>
-            )} */}
-
-            {isOpen && (
-  <motion.div
-    className="lg:hidden bg-gray-900 border border-white/20 rounded-b-2xl shadow-lg mt-2 px-6 py-4"
-    initial="hidden"
-    animate="visible"
-    exit="hidden"
-    variants={menuVariants}
-  >
-    <div className="flex flex-col items-center space-y-4">
-      {navItems.map((item) => (
-        <span key={item.id} className="w-full">
-          {item.link ? (
-            <Link
-              to={item.link}
-              onClick={() => setIsOpen(false)}
-              className="block w-full text-center text-primary text-lg font-medium py-2 rounded-md hover:bg-white/10 transition duration-200"
-              aria-label={`Go to ${item.label} page`}
-            >
-              {item.label}
-            </Link>
-          ) : (
-            <button
-              onClick={() => scrollToSection(item.id)}
-              className="block w-full text-center text-primary text-lg font-medium py-2 rounded-md hover:bg-white/10 transition duration-200"
-              aria-label={`Go to ${item.label} section`}
-            >
-              {item.label}
-            </button>
-          )}
-        </span>
-      ))}
-
-      {/* Get In Touch button */}
-      <button
-        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-2 rounded-lg hover:opacity-90 transition duration-200"
-        onClick={() => {
-          setIsModalOpen(true);
-          setIsOpen(false);
-        }}
-        aria-label="Open contact form"
-      >
-        Get In Touch
-      </button>
-    </div>
-  </motion.div>
-)}
-
+            )}
           </div>
         </motion.nav>
       )}
@@ -310,9 +268,15 @@ function Navbar() {
             <motion.button
               className="bg-gradient-to-r from-[#6E3AD6] to-[#5A91E2] p-3 rounded-full shadow-lg text-white hover:shadow-xl transition-shadow"
               onClick={() => setIsOpen(!isOpen)}
-              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-label={
+                isOpen ? "Close navigation menu" : "Open navigation menu"
+              }
             >
-              {isOpen ? <ToggleRight className="w-6 h-6" /> : <ToggleLeft className="w-6 h-6" />}
+              {isOpen ? (
+                <ToggleRight className="w-6 h-6" />
+              ) : (
+                <ToggleLeft className="w-6 h-6" />
+              )}
             </motion.button>
             {isOpen && (
               <motion.div
@@ -354,24 +318,23 @@ function Navbar() {
                     )}
                   </span>
                 ))}
-          <button
-           onClick={() => {
-           setIsModalOpen(true);
-           setIsOpen(false);
-           }}
-         onKeyDown={(e) => {
-           if (e.key === "Enter" || e.key === " ") {
-           setIsModalOpen(true);
-            setIsOpen(false);
-           }
-           }}
-           tabIndex={0}
-  className="cursor-pointer text-sm font-medium text-gray-800 bg-gradient-to-br from-purple-300 to-blue-200 group-hover:bg-gradient-to-br group-hover:from-blue-100 group-hover:to-purple-300 hover:text-blue-600 w-full text-left py-2 px-3 rounded-md hover:bg-gray-100/50 transition-colors"
-  aria-label="Open contact form"
->
-  Get In Touch
-</button>
-
+                <button
+                  onClick={() => {
+                    setIsModalOpen(true);
+                    setIsOpen(false);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      setIsModalOpen(true);
+                      setIsOpen(false);
+                    }
+                  }}
+                  tabIndex={0}
+                  className="cursor-pointer text-sm font-medium text-gray-800 bg-gradient-to-br from-purple-300 to-blue-200 group-hover:bg-gradient-to-br group-hover:from-blue-100 group-hover:to-purple-300 hover:text-blue-600 w-full text-left py-2 px-3 rounded-md hover:bg-gray-100/50 transition-colors"
+                  aria-label="Open contact form"
+                >
+                  Get In Touch
+                </button>
               </motion.div>
             )}
           </div>
@@ -397,7 +360,9 @@ function Navbar() {
             >
               <X className="w-6 h-6" />
             </button>
-            <h2 className="text-xl font-semibold text-white text-center">Join Us</h2>
+            <h2 className="text-xl font-semibold text-white text-center">
+              Join Us
+            </h2>
             <form className="mt-6 space-y-4" onSubmit={onSubmit}>
               <input
                 type="text"
@@ -464,4 +429,3 @@ function Navbar() {
 }
 
 export default Navbar;
- 
