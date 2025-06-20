@@ -3,14 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://Weepek.github.io/weepek",
+  "homepage": "https://weepek.github.io/weepek",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "clean": "gh-pages-clean"
   },
   "dependencies": {
     "@coreui/coreui": "^5.4.0",
@@ -20,6 +21,7 @@
     "@tailwindcss/vite": "^4.1.7",
     "clsx": "^2.1.1",
     "daisyui": "^5.0.37",
+    "focus-trap-react": "^11.0.4",
     "framer-motion": "^12.16.0",
     "gsap": "^3.13.0",
     "lodash": "^4.17.21",

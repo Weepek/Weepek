@@ -259,138 +259,161 @@
 
 // export default LandingPage2;
 
-
-import React, { useEffect, useCallback, useRef, lazy, Suspense } from "react";
+import React, { useEffect, useRef, useCallback, memo } from "react";
 import { motion } from "framer-motion";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, X } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { CALENDLY_URL, HERO_IMAGE, FALLBACK_IMAGE } from "./constants";
+import "./LandingPage2.css";
 
-// Register GSAP plugin
 gsap.registerPlugin(ScrollTrigger);
 
-// Fallback image
-const fallbackImage = "/assets/feaaturesimg.webp"; // Use WebP for better performance
-
-// Lazy load CreativeButton for better initial load
-const CreativeButton = React.memo(() => {
+const useCalendly = () => {
   const scriptLoaded = useRef(false);
 
   const loadCalendly = useCallback(() => {
-    if (scriptLoaded.current) return;
+    return new Promise((resolve, reject) => {
+      if (scriptLoaded.current) return resolve();
+      const script = document.createElement("script");
+      script.src = "https://assets.calendly.com/assets/external/widget.js";
+      script.async = true;
+      script.onload = () => {
+        scriptLoaded.current = true;
+        resolve();
+      };
+      script.onerror = reject;
+      document.body.appendChild(script);
 
-    const script = document.createElement("script");
-    script.src = "https://assets.calendly.com/assets/external/widget.js";
-    script.async = true;
-    document.body.appendChild(script);
-
-    const link = document.createElement("link");
-    link.href = "https://assets.calendly.com/assets/external/widget.css";
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
-
-    scriptLoaded.current = true;
+      const link = document.createElement("link");
+      link.href = "https://assets.calendly.com/assets/external/widget.css";
+      link.rel = "stylesheet";
+      document.head.appendChild(link);
+    });
   }, []);
 
-  const openCalendlyPopup = useCallback(() => {
-    loadCalendly();
-    if (window.Calendly) {
-      window.Calendly.initPopupWidget({
-        url: "https://calendly.com/poornima220500/30min",
-      });
-    } else {
-      setTimeout(() => {
-        if (window.Calendly) {
-          window.Calendly.initPopupWidget({
-            url: "https://calendly.com/poornima220500/30min",
-          });
-        } else {
-          window.open("https://calendly.com/poornima220500/30min", "_blank");
-        }
-      }, 500); // Wait for script to load
+  const openCalendlyPopup = useCallback(async () => {
+    try {
+      await loadCalendly();
+      const popup = document.createElement("div");
+      popup.className = "calendly-popup";
+      const closeButton = document.createElement("button");
+      closeButton.className = "custom-close-button";
+      closeButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+      closeButton.onclick = () => {
+        document.body.removeChild(popup);
+        if (window.Calendly) window.Calendly.closePopupWidget();
+      };
+      popup.appendChild(closeButton);
+      document.body.appendChild(popup);
+
+      window.Calendly.initPopupWidget({ url: CALENDLY_URL });
+    } catch {
+      window.open(CALENDLY_URL, "_blank");
     }
   }, [loadCalendly]);
+
+  return { openCalendlyPopup };
+};
+
+const CreativeButton = memo(() => {
+  const { openCalendlyPopup } = useCalendly();
 
   return (
     <motion.button
       onClick={openCalendlyPopup}
       aria-label="Book a meeting with Poornima"
-      className="relative inline-flex items-center gap-2 px-8 py-3 text-white font-poppins font-semibold text-lg rounded-full overflow-hidden group"
+      className="relative inline-flex items-center gap-2 px-6 py-3 text-white font-poppins font-semibold text-base sm:text-lg rounded-full overflow-hidden group focus:outline   focus:outline-purple-400"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
       <span className="relative z-10 flex items-center gap-2">
-        <CalendarDays className="w-5 h-5" />
+        <CalendarDays className="w-4 h-4 sm:w-5 sm:h-5" />
         Book a Meeting
       </span>
-      <span className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-100 group-hover:opacity-80 transition-opacity"></span>
-      <span className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-40 transition-opacity"></span>
-      <span className="absolute inset-0 border-2 border-purple-400 rounded-full animate-pulse"></span>
+    <span className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-100 group-hover:opacity-80 transition-opacity z-0"></span>
+      <span className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-40 transition-opacity z-0"></span>
+      <span className="absolute inset-0 flex items-center justify-center z-0">
+         <span className="w-0 h-0 bg-white opacity-20 rounded-full group-hover:w-64 group-hover:h-64 transition-all duration-500 ease-out"></span>
+      </span>
+      <span className="absolute inset-0 border-2 border-purple-400 rounded-full animate-pulse z-0"></span>
     </motion.button>
   );
 });
 
-// Move styles to a separate CSS file (styles.css)
-import "./Landingpage2.css";
+const Particle = ({ type, count }) => {
+  return [...Array(count)].map((_, i) => (
+    <div
+      key={`${type}-${i}`}
+      className={type}
+      style={{
+        left: `${Math.random() * 100}vw`,
+        top: `${Math.random() * 100}vh`,
+        animationDelay: `${Math.random() * (type === "star" ? 1.5 : 4)}s`,
+        animationDuration: `${type === "star" ? 2 : 6 + Math.random() * 4}s`,
+      }}
+    />
+  ));
+};
 
-const LandingPage2 = () => {
+const LandingPage = () => {
   const containerRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Batch particle animations into a single ScrollTrigger
-      gsap.to(".particle", {
-        y: -100,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          scrub: true,
-          start: "top bottom",
-          end: "bottom top",
-        },
-      });
+      try {
+        gsap.to(".particle", {
+          y: -100,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            scrub: true,
+            start: "top bottom",
+            end: "bottom top",
+          },
+        });
 
-      // Background parallax
-      gsap.to(".background-image", {
-        y: 80,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          scrub: true,
-          start: "top bottom",
-          end: "bottom top",
-        },
-      });
+        gsap.to(".background-image", {
+          y: 80,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            scrub: true,
+            start: "top bottom",
+            end: "bottom top",
+          },
+        });
 
-      // Gradient animation
-      gsap.to(".animated-gradient", {
-        backgroundPosition: "200% 50%",
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          scrub: true,
-          start: "top bottom",
-          end: "bottom top",
-        },
-      });
+        gsap.to(".animated-gradient", {
+          backgroundPosition: "200% 50%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            scrub: true,
+            start: "top bottom",
+            end: "bottom top",
+          },
+        });
 
-      // Staggered text animation
-      gsap.from(".content-container h1 span", {
-        opacity: 0,
-        x: (i) => (i % 2 === 0 ? -10 : 10),
-        stagger: 0.05,
-        scrollTrigger: {
-          trigger: ".content-container h1",
-          start: "top 90%",
-        },
-      });
+        gsap.from(".content-container h1 span", {
+          opacity: 0,
+          x: (i) => (i % 2 === 0 ? -10 : 10),
+          stagger: 0.05,
+          scrollTrigger: {
+            trigger: ".content-container h1",
+            start: "top 90%",
+          },
+        });
+      } catch (error) {
+        console.error("GSAP animation error:", error);
+      }
     }, containerRef);
 
     return () => ctx.revert();
   }, []);
 
   const handleImageError = useCallback((e) => {
-    e.target.style.backgroundImage = `url(${fallbackImage})`;
+    e.target.style.backgroundImage = `url(${FALLBACK_IMAGE})`;
   }, []);
 
   return (
@@ -400,48 +423,27 @@ const LandingPage2 = () => {
     >
       <div
         className="background-image"
-        style={{ backgroundImage: "url(/assets/Heroimg.webp)" }}
+        style={{ backgroundImage: `url(${HERO_IMAGE})` }}
         onError={handleImageError}
       />
-      {[...Array(10)].map((_, i) => (
-        <div
-          key={`particle-${i}`}
-          className="particle"
-          style={{
-            left: `${Math.random() * 100}vw`,
-            top: `${Math.random() * 100}vh`,
-            animationDelay: `${Math.random() * 4}s`,
-            animationDuration: `${6 + Math.random() * 4}s`,
-          }}
-        />
-      ))}
-      {[...Array(30)].map((_, i) => (
-        <div
-          key={`star-${i}`}
-          className="star"
-          style={{
-            left: `${Math.random() * 100}vw`,
-            top: `${Math.random() * 100}vh`,
-            animationDelay: `${Math.random() * 1.5}s`,
-          }}
-        />
-      ))}
-      <div className="content-container text-center flex flex-col justify-center items-center px-4 max-w-7xl">
+      <Particle type="particle" count={10} />
+      <Particle type="star" count={20} />
+      <div className="content-container text-center flex flex-col justify-center items-center px-4 sm:px-6 xs:max-w-normal sm:max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl  bg-yellow-300">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold font-poppins text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-purple-400 drop-shadow-md"
+          className="text-2xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold font-poppins text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-purple-300 drop-shadow-md transition-all duration-300"
         >
           {"Weepek".split("").map((char, i) => (
             <span key={i}>{char}</span>
           ))}{" "}
-          <span className="text-white">Your Web Development Partner</span>
+          <span className="text-white   ">Your Web Development Partner</span>
         </motion.h1>
-        <p className="text-normal md:text-2xl font-poppins text-gray-200 mt-6 leading-relaxed px-2">
+        <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-poppins text-gray-100 mt-4 sm:mt-6 leading-relaxed px-2 sm:px-4">
           For Digital Success - Branding, Websites, Apps, and research solutions.
         </p>
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <CreativeButton />
         </div>
       </div>
@@ -449,4 +451,4 @@ const LandingPage2 = () => {
   );
 };
 
-export default React.memo(LandingPage2);
+export default LandingPage;

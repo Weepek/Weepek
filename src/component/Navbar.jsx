@@ -19,8 +19,7 @@ function Navbar() {
   const navItems = [
     { id: "home", label: "Home", link: "/weepek/" },
     { id: "about", label: "About", link: "/weepek/About" },
-    { id: "project", label: "Project" }, // Scrolls to #project
-    // { id: "faq", label: "FAQ" }, // Scrolls to #faq
+    { id: "project", label: "Project" }, 
     { id: "contact", label: "Contact Us", link: "/weepek/contact" },
   ];
 
@@ -150,7 +149,7 @@ function Navbar() {
                 </div>
               </div>
 
-              <div className="hidden md:flex md:items-center md:space-x-8">
+              <div className="hidden lg:flex lg:items-center lg:space-x-8">
                 {navItems.map((item) => (
                   <span key={item.id}>
                     {item.link ? (
@@ -174,7 +173,7 @@ function Navbar() {
                 ))}
               </div>
 
-              <div className="hidden md:flex items-center space-x-4">
+              <div className="hidden lg:flex items-center space-x-4">
                 <button
                   className="relative px-4 py-2 border border-purple-200 text-white rounded-full group overflow-hidden hover:shadow-lg hover:shadow-purple-500/50"
                   onClick={() => setIsModalOpen(true)}
@@ -190,7 +189,7 @@ function Navbar() {
               </div>
 
               <button
-                className="md:hidden text-primary focus:outline-none"
+                className="lg:hidden text-primary focus:outline-none"
                 onClick={() => setIsOpen(!isOpen)}
                 aria-label={isOpen ? "Close menu" : "Open menu"}
               >
@@ -198,15 +197,17 @@ function Navbar() {
               </button>
             </div>
 
-            {isOpen && (
+              {/* Mobile content */}
+
+            {/* {isOpen && (
               <motion.div
-                className="md:hidden bg-gray-950 rounded-b-2xl shadow-lg mt-2"
+                className="lg:hidden bg-gray-900 border  rounded-b-2xl shadow-lg  mt-2"
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
                 variants={menuVariants}
               >
-                <div className="pt-4 pb-2 space-y-4 text-center">
+                <div className="text-center justify-center items-center">
                   {navItems.map((item) => (
                     <span key={item.id}>
                       {item.link ? (
@@ -243,7 +244,55 @@ function Navbar() {
                   </div>
                 </div>
               </motion.div>
-            )}
+            )} */}
+
+            {isOpen && (
+  <motion.div
+    className="lg:hidden bg-gray-900 border border-white/20 rounded-b-2xl shadow-lg mt-2 px-6 py-4"
+    initial="hidden"
+    animate="visible"
+    exit="hidden"
+    variants={menuVariants}
+  >
+    <div className="flex flex-col items-center space-y-4">
+      {navItems.map((item) => (
+        <span key={item.id} className="w-full">
+          {item.link ? (
+            <Link
+              to={item.link}
+              onClick={() => setIsOpen(false)}
+              className="block w-full text-center text-primary text-lg font-medium py-2 rounded-md hover:bg-white/10 transition duration-200"
+              aria-label={`Go to ${item.label} page`}
+            >
+              {item.label}
+            </Link>
+          ) : (
+            <button
+              onClick={() => scrollToSection(item.id)}
+              className="block w-full text-center text-primary text-lg font-medium py-2 rounded-md hover:bg-white/10 transition duration-200"
+              aria-label={`Go to ${item.label} section`}
+            >
+              {item.label}
+            </button>
+          )}
+        </span>
+      ))}
+
+      {/* Get In Touch button */}
+      <button
+        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-2 rounded-lg hover:opacity-90 transition duration-200"
+        onClick={() => {
+          setIsModalOpen(true);
+          setIsOpen(false);
+        }}
+        aria-label="Open contact form"
+      >
+        Get In Touch
+      </button>
+    </div>
+  </motion.div>
+)}
+
           </div>
         </motion.nav>
       )}
@@ -415,3 +464,4 @@ function Navbar() {
 }
 
 export default Navbar;
+ 

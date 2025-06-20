@@ -1,159 +1,69 @@
-.background-image{
-    background-image: url('../assets/backgroun1.jpg');
-    background-size: cover; 
+.animated-gradient {
+  background: linear-gradient(45deg, #1e3a8a, #7c3aed, #db2777, #1e3a8a);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
 }
 
-
-@keyframes particle-float {
-  0% {
-    transform: translateY(0);
-    opacity: 0.5;
-  }
-  100% {
-    transform: translateY(-80vh);
-    opacity: 0;
-  }
-}
-@keyframes starry-twinkle {
-  0%,
-  100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-@keyframes gradientLoop {
+@keyframes gradientShift {
   0% {
     background-position: 0% 50%;
   }
+  50% {
+    background-position: 100% 50%;
+  }
   100% {
-    background-position: 200% 50%;
+    background-position: 0% 50%;
   }
 }
+
 .background-image {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
-  filter: blur(8px);
-  will-change: transform;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  filter: brightness(0.6);
 }
+
 .particle {
   position: absolute;
-  width: 2px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.5);
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  animation: particle-float 8s linear infinite;
-  pointer-events: none;
-  z-index: 2;
-  will-change: transform, opacity;
+  animation: float 6s ease-in-out infinite;
 }
+
 .star {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 3px;
+  height: 3px;
   background: white;
   border-radius: 50%;
-  animation: starry-twinkle 1.5s infinite;
-  pointer-events: none;
-  z-index: 2;
-}
-.content-container {
-  position: relative;
-  z-index: 3;
-}
-.animated-gradient {
-  background: linear-gradient(55deg, #030c26, #000000, #020203, #030c26);
-  background-size: 200% 100%;
-  animation: gradientLoop 10s linear infinite;
-}
-.font-poppins {
-  font-family: "Poppins", sans-serif;
-}
-.calendly-popup {
-  z-index: 1000 !important;
-}
-.calendly-popup-content {
-  background: linear-gradient(
-    35deg,
-    rgba(3, 12, 38, 0.9),
-    rgba(0, 0, 0, 0.9),
-    rgba(2, 2, 3, 0.9),
-    rgba(3, 12, 38, 0.9)
-  ) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-  color: white !important;
-}
-.calendly-popup-content * {
-  font-family: "Poppins", sans-serif !important;
+  animation: twinkle 2s ease-in-out infinite;
 }
 
- /* border Gradient */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-20px);
+    opacity: 1;
+  }
+}
 
-    .animated-border-btn {
-      position: relative;
-      padding: 12px 24px;
-      font-size: 16px;
-      color: white;
-      background: black;
-      border: none;
-      cursor: pointer;
-      z-index: 1;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .animated-border-btn::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: conic-gradient(
-        from 0deg,
-        #ff0080,
-        #7928ca,
-        #2afadf,
-        #ff0080
-      );
-      z-index: -1;
-      border-radius: 30px;
-      animation: spin 4s linear infinite;
-      transition: opacity 0.6s ease-in-out;
-      opacity: 0;
-    }
-
-    .animated-border-btn:hover::before {
-      opacity: 1;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(180deg);
-      }
-    }
-
-    /* Optional: Keep inner area solid black */
-    .animated-border-btn::after {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      right: 2px;
-      bottom: 2px;
-      background: black;
-      border-radius: 6px;
-      z-index: -1;
-          }
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
