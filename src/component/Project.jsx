@@ -107,6 +107,7 @@
 
 // export default Project;
 
+
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { ReactTyped } from "react-typed";
@@ -147,7 +148,7 @@ const fadeInVariants = {
     href={url}
     target="_blank"
     rel="noopener noreferrer"
-    className="relative flex items-center justify-between  bg-gray-300/5 overflow-hidden rounded-3xl group cursor-pointer min-w-[250px] md:w-full  min-h-[250px]"
+    className="relative flex items-center justify-between outline-2 outline-offset-2  outline-gray-400/20  backdrop-filter backdrop-blur-sm opacity-15 overflow-hidden rounded-3xl group cursor-pointer min-w-[250px] md:w-full  min-h-[250px]"
     aria-label={`View ${title} Project`}
     variants={cardVariants}
   >
@@ -200,7 +201,7 @@ const Project = () => {
             /> */}
           </motion.h2>
           <motion.h2
-            className="text-3xl font-Clash text-center lg:text-center text-white tracking-[.20em] mt-10"
+            className="text-5xl font-Clash text-center lg:text-center  bg-gradient-to-r from-[#b797f7] to-[#0629f1] text-transparent bg-clip-text tracking-[.20em] mt-10"
             variants={fadeInVariants}
           >
             Work
@@ -241,9 +242,9 @@ const Project = () => {
                 e.target.onerror = null;
               }}
             />
-            <div className="invisible md:visible absolute bottom-0 left-4 p-4  to-transparent w-full">
-              <h3 className="text-black text-2xl font-bold">Cake'es</h3>
-              <div className="text-xl text-yellow-100 mt-2">
+            <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent text-yellow-100 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+              <h3 className="text-white text-3xl font-Excon ">Cake'es</h3>
+              <div className="text-2xl text-white font-Gambetta mt-2">
                 UI/UX & Website
               </div>
             </div>
@@ -292,7 +293,7 @@ const Project = () => {
           <ProjectCard
             title="LOGO DESIGN"
             subtitle="Web Development"
-            image={logodesign2}
+            image={logodesign}
             url="https://example.com/another-project"
           />
         </motion.div>
